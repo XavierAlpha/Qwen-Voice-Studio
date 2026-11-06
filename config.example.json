@@ -1,0 +1,11 @@
+{
+  "model_roots": [
+    "models",
+    "../models"
+  ],
+  "discover_hf_cache": true,
+  "auto_discover": true,
+  "scan_depth": 6,
+  "remember_drafts": false,
+  "hide_paths": true
+}

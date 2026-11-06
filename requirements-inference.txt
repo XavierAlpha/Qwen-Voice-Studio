@@ -1,0 +1,6 @@
+# Official Qwen TTS Python runtime. The mixed-device corrections are internal
+# to studio/inference_runtime.py; no second WebUI or Git clone is required.
+qwen-tts==0.1.1
+transformers==4.57.3
+accelerate==1.12.0
+huggingface-hub>=0.34.0,<1.0

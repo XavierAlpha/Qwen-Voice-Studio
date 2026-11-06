@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><script src="/ui/bootstrap.js?v=3.6.0"></script>
+<meta content="dark light" name="color-scheme"/>
+<title>Qwen Voice Studio</title>
+<link href="/ui/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="/ui/styles.css?v=3.6.0" rel="stylesheet"/>
+</head>
+<body data-density="comfortable" data-font="studio" data-layout="split" data-theme="dark"><a class="skip-link" data-i18n="a11y.skip" href="#main-content">跳到创作区</a>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="brand">
+<div class="brand-icon"><i data-icon="audio-waveform"></i></div>
+<div class="brand-word"><strong>Voice Studio</strong></div>
+<button aria-label="关闭侧边栏" class="icon-button sidebar-close mobile-only" data-i18n-aria-label="a11y.closeSidebar" id="sidebar-close"><i data-icon="x"></i></button>
+</div>
+<div class="sidebar-scroll">
+<div class="side-label" data-i18n="nav.create">创作模式</div>
+<nav aria-label="生成模式" class="side-nav" data-i18n-aria-label="a11y.modes">
+<button aria-current="page" class="side-link active" data-i18n-aria-label="mode.design" data-i18n-title="mode.design" data-mode="design"><i data-icon="sparkles"></i><span data-i18n="mode.design">声音设计</span><i class="link-trail" data-icon="chevron-right"></i></button>
+<button class="side-link" data-i18n-aria-label="mode.clone" data-i18n-title="mode.clone" data-mode="clone"><i data-icon="mic"></i><span data-i18n="mode.clone">声音克隆</span><i class="link-trail" data-icon="chevron-right"></i></button>
+<button class="side-link" data-i18n-aria-label="mode.custom" data-i18n-title="mode.custom" data-mode="custom"><i data-icon="users"></i><span data-i18n="mode.custom">预设音色</span><i class="link-trail" data-icon="chevron-right"></i></button>
+</nav>
+<div class="side-section-head"><div class="side-label" data-i18n="nav.models">本地模型</div><button aria-label="重新扫描模型" class="icon-button tiny" data-i18n-aria-label="a11y.rescan" data-i18n-title="a11y.rescan" id="refresh-models" title="重新扫描"><i data-icon="refresh-cw"></i></button></div>
+<div class="model-control">
+<select aria-label="Local model" data-i18n-aria-label="settings.models" id="model-select"></select>
+<div class="model-subline"><span id="model-subtitle"></span><button class="add-model-link" id="add-model-shortcut" type="button"><i data-icon="folder-plus"></i><span data-i18n="models.manage">Manage</span></button></div>
+</div>
+<div class="side-label history-label" data-i18n="nav.workspace">项目</div>
+<nav aria-label="工作区域" class="side-nav" data-i18n-aria-label="a11y.areas">
+<button class="side-link" data-i18n-aria-label="nav.library" data-i18n-title="nav.library" data-view="history"><i data-icon="library"></i><span data-i18n="nav.library">声音库</span><i class="link-trail" data-icon="chevron-right"></i></button>
+<button class="side-link" data-i18n-aria-label="nav.presets" data-i18n-title="nav.presets" data-view="presets"><i data-icon="bookmark"></i><span data-i18n="nav.presets">音色预设</span><i class="link-trail" data-icon="chevron-right"></i></button>
+</nav>
+</div>
+<button aria-label="收起侧栏" class="collapse-button" data-i18n-aria-label="a11y.collapse" data-i18n-title="a11y.collapse" id="collapse-sidebar" title="收起侧栏"><i data-icon="panel-left"></i></button><div class="sidebar-footer">
+<div class="runtime-info">
+<span class="status-dot" id="device-dot"></span>
+<div class="runtime-label"><strong id="runtime-device">检测设备中</strong><small id="runtime-sub">本机推理</small></div>
+
+</div>
+</div>
+</aside>
+<div class="mobile-backdrop" id="mobile-backdrop"></div>
+<div class="main-area">
+<header class="topbar">
+<div class="top-left">
+<button aria-controls="sidebar" aria-expanded="false" aria-label="打开菜单" class="icon-button mobile-only" data-i18n-aria-label="a11y.menu" id="menu-toggle"><i data-icon="menu"></i></button>
+<div class="breadcrumbs"><span data-i18n="nav.studio">工作台</span><i data-icon="chevron-right"></i><strong id="breadcrumb-current">声音设计</strong></div>
+</div>
+<div class="top-actions"><span class="demo-badge hidden" data-i18n="system.demo" id="demo-badge">界面测试</span>
+<div class="task-status"><span class="live-dot" id="task-dot"></span><span id="task-status">就绪</span></div>
+
+<button aria-label="偏好设置" class="icon-button" data-i18n-aria-label="a11y.preferences" data-i18n-title="a11y.preferences" id="settings-toggle" title="偏好设置"><i data-icon="settings"></i></button>
+</div>
+</header>
+<main class="content" data-i18n-aria-label="a11y.shell" id="main-content" tabindex="-1">
+<section class="view" id="view-studio">
+<div class="page-head">
+<div>
+<h1 id="workspace-title">声音设计</h1>
+</div>
+<div class="head-actions">
+<div class="lang-wrap"><i data-icon="languages"></i><select aria-label="语种" data-i18n-aria-label="a11y.language" id="language"><option data-i18n="language.chinese" value="Chinese">中文</option><option value="English">English</option><option value="Japanese">日本語</option><option value="Korean">한국어</option><option value="German">Deutsch</option><option value="French">Français</option><option value="Spanish">Español</option><option value="Italian">Italiano</option><option value="Portuguese">Português</option><option value="Russian">Русский</option><option data-i18n="language.auto" value="Auto">自动检测</option></select></div>
+<button class="outlined-button" id="history-shortcut"><i data-icon="clock-3"></i><span data-i18n="action.history">历史记录</span></button>
+</div>
+</div>
+<div class="workspace" id="workspace">
+<section class="panel editor-panel">
+<div class="panel-heading"><div class="panel-title"><i data-icon="align-left"></i><span data-i18n="editor.title">生成内容</span></div><div class="panel-tools"><button class="inline-button" data-i18n-title="action.example" id="load-example" title="试用示例" type="button"><i data-icon="wand-sparkles"></i><span data-i18n="action.example">试用示例</span></button><button aria-label="导入文本" class="icon-button tiny" data-i18n-aria-label="action.importText" data-i18n-title="action.importText" id="import-text" title="导入文本"><i data-icon="file"></i></button><input accept=".txt" hidden="" id="text-file" type="file"/><span aria-live="off" class="micro-label" id="char-counter">0 字</span><button aria-label="清空文字" class="icon-button tiny" data-i18n-aria-label="action.clearText" data-i18n-title="action.clearText" id="clear-text" title="清空文字"><i data-icon="eraser"></i></button></div></div>
+<textarea aria-label="生成内容" data-i18n-aria-label="editor.title" data-i18n-placeholder="placeholder.script" id="script-text" placeholder="输入你想听到的文字……" spellcheck="false"></textarea>
+
+<section class="mode-controls" id="design-controls">
+<div class="section-heading"><div class="panel-title"><i data-icon="wand-sparkles"></i><span data-i18n="voice.description">音色描述</span></div><div class="section-actions"><button class="inline-button" id="add-preset"><i data-icon="bookmark-plus"></i><span data-i18n="action.savePreset">保存预设</span></button></div></div>
+<textarea aria-label="音色描述" class="instruction-text" data-i18n-aria-label="voice.description" data-i18n-placeholder="placeholder.direction" id="voice-instruct" placeholder="描述音色、年龄感、情绪、语速、发声方式……"></textarea>
+<div aria-label="音色预设" class="preset-strip" data-i18n-aria-label="nav.presets" id="preset-strip"></div>
+</section>
+<section class="mode-controls hidden" id="clone-controls">
+<div class="section-heading"><div class="panel-title"><i data-icon="mic"></i><span data-i18n="reference.title">参考音频</span></div></div>
+<div aria-label="上传参考声音" class="upload-zone" data-i18n-aria-label="a11y.upload" id="upload-zone" role="button" tabindex="0"><i data-icon="audio-waveform"></i><strong id="reference-title">点击或拖入音频</strong><span id="reference-detail">WAV / FLAC / OGG</span><input accept=".wav,.flac,.ogg" hidden="" id="ref-file" type="file"/></div>
+<div class="reference-actions"><button class="subtle-button" id="record-btn"><i data-icon="mic"></i><span id="record-label">录音</span></button><button class="subtle-button" id="remove-ref"><i data-icon="x"></i><span data-i18n="action.remove">移除</span></button><audio controls="" data-i18n-aria-label="reference.title" id="reference-player" preload="none"></audio></div>
+<div class="small-label" data-i18n="reference.transcript">参考音频文字</div>
+<textarea aria-label="参考音频文字" class="reference-text" data-i18n-aria-label="reference.transcript" data-i18n-placeholder="placeholder.transcript" id="ref-text" placeholder="填写参考音频真实说出的内容"></textarea>
+<div class="clone-options"><label class="check-inline"><input id="xvector-only" type="checkbox"/><span data-i18n="reference.xvector">仅使用声纹</span></label><label class="check-inline"><input id="voice-consent" type="checkbox"/><span data-i18n="reference.consent">本人或已授权声音</span></label></div>
+</section>
+<section class="mode-controls hidden" id="custom-controls">
+<div class="section-heading"><div class="panel-title"><i data-icon="users"></i><span data-i18n="mode.custom">预设音色</span></div></div>
+<div class="small-label" data-i18n="speaker.choose">选择说话人</div>
+<select aria-label="说话人" class="wide-select" data-i18n-aria-label="a11y.speaker" id="speaker" disabled><option data-i18n="speaker.addModel" value="">请先选择 CustomVoice 模型</option></select>
+<p class="speaker-hint" id="speaker-hint" data-i18n="speaker.addModelHint">添加 CustomVoice 模型后即可选择内置说话人，无需单独加载。</p>
+<div class="small-label top-space" data-i18n="voice.style">语气指令</div>
+<textarea aria-label="语气指令" class="instruction-text" data-i18n-aria-label="voice.style" data-i18n-placeholder="placeholder.style" id="custom-instruct" placeholder="可选：例如温柔、激动、严肃……"></textarea>
+</section>
+<details class="advanced" id="advanced-settings">
+<summary><span><i data-icon="sliders-horizontal"></i><span data-i18n="sampling.title">生成参数</span></span><i data-icon="chevron-down"></i></summary>
+<div class="segment-row batch-options"><label class="check-inline" data-i18n-title="editor.lineHint" title="每行生成一条独立语音"><input id="split-lines" type="checkbox"/><span data-i18n="editor.lines">逐行生成</span></label><label><span data-i18n="variation.count">生成份数</span><select data-i18n-aria-label="a11y.variations" id="variations"><option data-i18n="variation.one" value="1">1 份</option><option data-i18n="variation.two" value="2">2 份</option><option data-i18n="variation.three" value="3">3 份</option></select></label><span class="field-note" data-i18n="variation.hint">每份独立生成一条音频，并非不同模型版本。</span></div>
+<div class="segment-row"><label class="check-inline"><input id="split-text" type="checkbox"/><span data-i18n="sampling.segment">长文分段</span></label><label><span data-i18n="sampling.chunk">每段</span><input aria-label="每段字数" data-i18n-aria-label="a11y.chunk" id="chunk-chars" max="500" min="60" type="number" value="180"/></label><label><span data-i18n="sampling.pause">间隔</span><input aria-label="段间毫秒" data-i18n-aria-label="a11y.pause" id="pause-ms" max="2000" min="0" type="number" value="180"/> ms</label></div><div class="advanced-grid">
+<label><span><span data-i18n="sampling.temperature">温度</span><output id="temperature-value">0.9</output></span><input data-i18n-aria-label="sampling.temperature" id="temperature" max="2" min="0.1" step="0.05" type="range" value="0.9"/></label>
+<label><span><span data-i18n="sampling.topP">Top P</span><output id="top-p-value">0.9</output></span><input data-i18n-aria-label="sampling.topP" id="top-p" max="1" min="0.05" step="0.05" type="range" value="0.9"/></label>
+<label><span><span data-i18n="sampling.topK">Top K</span><output id="top-k-value">50</output></span><input data-i18n-aria-label="sampling.topK" id="top-k" max="100" min="1" step="1" type="range" value="50"/></label>
+<label><span><span data-i18n="sampling.repeat">重复惩罚</span><output id="repeat-value">1.05</output></span><input data-i18n-aria-label="sampling.repeat" id="repeat" max="2" min="1" step="0.05" type="range" value="1.05"/></label>
+<label><span><span data-i18n="sampling.maxTokens">最大音频 Token</span><output id="max-tokens-value">512</output></span><input data-i18n-aria-label="sampling.maxTokens" id="max-tokens" max="2048" min="64" step="64" type="range" value="512"/></label>
+<label><span data-i18n="sampling.seed">随机种子</span><input class="number-input" data-i18n-aria-label="sampling.seed" id="seed" max="2147483647" min="-1" type="number" value="-1"/></label>
+</div>
+</details>
+</section>
+<div aria-label="调整面板宽度" aria-orientation="vertical" class="splitter" data-i18n-aria-label="a11y.resize" id="panel-splitter" role="separator" tabindex="0"></div>
+<section class="panel output-panel">
+<div class="panel-heading"><div class="panel-title"><i data-icon="headphones"></i><span data-i18n="output.title">音频预览</span></div></div>
+<div class="preview-main" id="preview-main">
+<div class="empty-output" id="empty-output"><div class="sound-orb"><i data-icon="audio-waveform"></i></div><strong data-i18n="output.empty">等待你的第一段声音</strong><span class="empty-caption" data-i18n="output.emptyCaption">写下台词，赋予它声音。</span></div>
+<div class="active-output hidden" id="active-output">
+<div class="sound-visual"><canvas aria-label="音频波形" data-i18n-aria-label="a11y.waveform" id="wave-canvas"></canvas><div class="playline" id="playline"></div></div>
+<div class="audio-track-meta"><div><strong id="output-title">生成结果</strong><small id="output-time">刚刚</small></div><span class="duration" id="duration-label">00:00</span></div>
+<audio id="audio-player" preload="metadata"></audio>
+<div class="player-actions">
+<button aria-label="播放" class="round-play" id="play-btn"><i data-icon="play"></i></button>
+<div class="progress-box"><input aria-label="播放进度" data-i18n-aria-label="a11y.progress" id="audio-progress" max="100" min="0" step="0.1" type="range" value="0"/><div class="time-row"><span id="player-current">0:00</span><span id="player-total">0:00</span></div></div>
+<select aria-label="播放速度" data-i18n-aria-label="a11y.speed" id="playback-rate"><option value="0.75">0.75×</option><option selected="" value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select><div class="download-wrap"><select aria-label="导出格式" data-i18n-aria-label="a11y.format" id="export-format"><option value="wav">WAV</option><option value="flac">FLAC</option><option value="mp3">MP3</option></select><button aria-label="下载音频" class="icon-button" data-i18n-aria-label="action.download" data-i18n-title="action.download" id="download-audio" title="下载音频"><i data-icon="download"></i></button></div>
+</div>
+<div class="output-toolbar"><button aria-label="重用配置" class="subtle-button" data-i18n-aria-label="action.reuse" data-i18n-title="action.reuse" id="reuse-output" title="重用配置"><i data-icon="rotate-ccw"></i><span data-i18n="action.reuseShort">重用配置</span></button><button aria-label="用作参考" class="subtle-button" data-i18n-aria-label="action.reference" data-i18n-title="action.reference" id="use-reference" title="用作参考"><i data-icon="mic"></i><span data-i18n="action.referenceShort">用作参考</span></button><button aria-label="导出参数" class="icon-button tiny" data-i18n-aria-label="action.metadata" data-i18n-title="action.metadata" id="export-metadata" title="导出参数"><i data-icon="file"></i></button><button aria-label="收藏" class="icon-button tiny" data-i18n-aria-label="action.favorite" id="favorite-output"><i data-icon="star"></i></button></div><div class="metric-row"><div><small data-i18n="metric.elapsed">生成时间</small><strong id="metric-elapsed">—</strong></div><div><small>RTF</small><strong id="metric-rtf">—</strong></div><div><small data-i18n="metric.vram">GPU 峰值</small><strong id="metric-vram">—</strong></div></div>
+</div>
+<div aria-live="polite" class="job-progress hidden" id="job-progress" role="status"><div class="job-step"><i data-icon="loader-circle"></i><span id="job-step-text">加载中</span><strong id="job-percent"></strong></div><div class="progress-rail"><div id="job-progress-fill"></div></div><button class="subtle-button" id="cancel-job"><i data-icon="square"></i><span data-i18n="action.stopTask">停止任务</span></button></div>
+</div>
+<div class="output-bottom"><div class="section-heading mini"><span data-i18n="jobs.title">当前任务</span><span id="session-count">0 条</span></div><div class="session-tracks" id="session-tracks"><div class="muted-empty" data-i18n="jobs.empty">尚无生成记录</div></div></div>
+</section>
+</div>
+<div id="compose-actions"><div class="form-error hidden" id="form-error" role="alert"></div><div class="compose-footer"><div class="footer-left"><span class="kbd">Ctrl</span><span class="plus-sign">+</span><span class="kbd">Enter</span><span class="footer-hint" data-i18n="action.shortcut">快速生成</span></div><div class="generate-controls"><button class="generate-button" id="generate-btn"><i data-icon="sparkles"></i><span data-i18n="action.generate">生成语音</span><i class="generate-arrow" data-icon="arrow-right"></i></button></div></div></div>
+</section>
+<section class="view hidden" id="view-history"><div class="page-head"><div><h1 data-i18n="nav.library">声音库</h1></div><button class="outlined-button" id="back-to-studio"><i data-icon="arrow-left"></i><span data-i18n="action.back">返回创作</span></button></div><div class="library-toolbar"><div class="search-wrap"><i data-icon="search"></i><input aria-label="搜索声音库" data-i18n-aria-label="a11y.search" data-i18n-placeholder="placeholder.search" id="history-search" placeholder="搜索台词或模型" type="search"/></div><select aria-label="按类型筛选" data-i18n-aria-label="a11y.filter" id="history-filter"><option data-i18n="filter.all" value="all">全部模式</option><option data-i18n="mode.design" value="design">声音设计</option><option data-i18n="mode.clone" value="clone">声音克隆</option><option data-i18n="mode.custom" value="custom">预设音色</option></select><label class="check-inline"><input id="favorites-only" type="checkbox"/><span data-i18n="action.favorite">收藏</span></label><button class="outlined-button" id="history-refresh"><i data-icon="refresh-cw"></i><span data-i18n="action.refresh">刷新</span></button></div><div class="library-list" id="history-list"></div><button class="outlined-button hidden" data-i18n="action.more" id="history-more">加载更多</button></section>
+<section class="view hidden" id="view-presets"><div class="page-head"><div><h1 data-i18n="nav.presets">音色预设</h1></div><div class="head-actions"><button class="subtle-button" id="restore-presets"><i data-icon="rotate-ccw"></i><span data-i18n="action.restorePresets">恢复默认</span></button><button class="outlined-button" id="new-preset"><i data-icon="plus"></i><span data-i18n="action.newPreset">新建预设</span></button></div></div><div class="preset-grid" id="preset-grid"></div></section>
+</main>
+</div>
+</div>
+<dialog aria-labelledby="settings-title" class="dialog settings-dialog" id="settings-dialog">
+<form class="dialog-card" method="dialog">
+<div class="dialog-header"><h2 data-i18n="settings.title" id="settings-title">设置</h2><button aria-label="关闭" class="icon-button" data-i18n-aria-label="action.close" type="button" value="cancel"><i data-icon="x"></i></button></div>
+<div aria-label="设置分类" class="settings-tabs" data-i18n-aria-label="a11y.tabs" role="tablist"><button aria-controls="tab-appearance" aria-selected="true" data-i18n="settings.appearance" data-settings-tab="appearance" id="tab-button-appearance" role="tab" tabindex="-1" type="button">外观</button>
+<button aria-controls="tab-models" aria-selected="false" data-i18n="settings.models" data-settings-tab="models" id="tab-button-models" role="tab" type="button">模型</button>
+<button aria-controls="tab-runtime" aria-selected="false" data-i18n="settings.runtime" data-settings-tab="runtime" id="tab-button-runtime" role="tab" tabindex="-1" type="button">推理</button>
+<button aria-controls="tab-privacy" aria-selected="false" data-i18n="settings.privacy" data-settings-tab="privacy" id="tab-button-privacy" role="tab" tabindex="-1" type="button">隐私</button>
+</div>
+<div class="dialog-body"><section aria-labelledby="tab-button-appearance" id="tab-appearance" role="tabpanel">
+<div class="appearance-grid">
+<label class="form-group"><span data-i18n="appearance.language">界面语言</span><select data-i18n-aria-label="appearance.language" id="interface-language"><option value="zh-CN">简体中文</option><option value="en">English</option></select><small data-i18n="appearance.languageNote">不改变台词或语音语言</small></label>
+<label class="form-group"><span data-i18n="appearance.theme">主题</span><select data-i18n-aria-label="appearance.theme" id="interface-theme"><option data-i18n="appearance.system" value="system">跟随系统</option><option data-i18n="appearance.light" value="light">浅色</option><option data-i18n="appearance.dark" value="dark">深色</option></select></label>
+</div>
+<fieldset class="type-picker"><legend data-i18n="appearance.type">Typography</legend><div class="type-options">
+<label class="type-card" data-type-card="studio"><input checked name="font-preset" type="radio" value="studio"/><span aria-hidden="true" class="type-glyph type-sans">Aa <span>字</span></span><span class="type-copy"><strong data-i18n="appearance.studio">Modern sans</strong><small data-i18n="appearance.sansPair">Inter / Noto Sans SC</small></span></label>
+<label class="type-card" data-type-card="editorial"><input name="font-preset" type="radio" value="editorial"/><span aria-hidden="true" class="type-glyph type-serif">Aa <span>字</span></span><span class="type-copy"><strong data-i18n="appearance.editorial">Editorial serif</strong><small data-i18n="appearance.serifPair">Georgia / Noto Serif SC</small></span></label>
+</div></fieldset>
+<div class="appearance-grid appearance-secondary">
+<label class="form-group"><span data-i18n="appearance.textSize">文字大小</span><select data-i18n-aria-label="appearance.textSize" id="interface-scale"><option value="100">100%</option><option value="110">110%</option><option value="120">120%</option></select></label>
+<label class="form-group"><span data-i18n="appearance.density">界面密度</span><select data-i18n-aria-label="appearance.density" id="interface-density"><option data-i18n="appearance.comfortable" value="comfortable">舒适</option><option data-i18n="appearance.compact" value="compact">紧凑</option></select></label>
+<label class="form-group"><span data-i18n="appearance.layout">工作区布局</span><select data-i18n-aria-label="appearance.layout" id="interface-layout"><option data-i18n="appearance.split" value="split">并排</option><option data-i18n="appearance.stack" value="stack">纵向</option></select></label>
+</div>
+<div class="appearance-reset"><small data-i18n="appearance.immediate">即时保存，仅影响本浏览器</small><button class="subtle-button" id="reset-appearance" type="button"><i data-icon="rotate-ccw"></i><span data-i18n="appearance.reset">重置外观</span></button></div>
+</section>
+<section aria-labelledby="tab-button-models" class="hidden" id="tab-models" role="tabpanel">
+<div class="section-heading"><span data-i18n="nav.models">本地模型</span><span id="model-count" class="model-count" aria-live="polite"></span><button class="subtle-button" id="scan-models" type="button"><i data-icon="refresh-cw"></i><span data-i18n="action.saveAndScan">保存并扫描</span></button></div>
+<div class="model-library" id="model-library"></div>
+<div class="model-path-row"><input aria-label="模型目录" data-i18n-aria-label="a11y.modelPath" data-i18n-placeholder="placeholder.modelPath" id="new-model-path" placeholder="模型目录（包含 config.json）" spellcheck="false"/><button class="subtle-button native-folder-button hidden" data-i18n-title="settings.folderPickerServer" id="browse-model-path" type="button"><i data-icon="folder-plus"></i><span data-i18n="action.chooseFolder">选择文件夹</span></button><button class="outlined-button" id="register-model" type="button"><i data-icon="plus"></i><span data-i18n="action.add">添加</span></button></div>
+<details class="model-discovery" id="model-discovery"><summary data-i18n="settings.scanAdvanced">Discovery options</summary><div class="model-discovery-body">
+<div class="scan-roots-panel"><div class="scan-roots-heading"><strong data-i18n="settings.roots">扫描目录</strong><span class="model-count" id="scan-root-count" aria-live="polite"></span></div><div class="scan-roots-list" id="scan-roots-list"></div>
+<div class="scan-roots-tools"><button class="subtle-button native-folder-button hidden" data-i18n-title="settings.folderPickerServer" id="browse-scan-root" type="button"><i data-icon="folder-plus"></i><span data-i18n="action.addScanFolder">添加文件夹</span></button><button class="subtle-button" id="edit-scan-roots" type="button" aria-expanded="false" aria-controls="scan-root-editor"><i data-icon="edit"></i><span data-i18n="action.manualPaths">手动编辑</span></button></div>
+<label class="scan-root-editor hidden" id="scan-root-editor"><span data-i18n="settings.perLine">每行一个</span><textarea data-i18n-aria-label="settings.roots" id="scan-roots" rows="3" spellcheck="false"></textarea></label>
+</div>
+<div class="settings-checks"><label><input id="scan-cache" type="checkbox"/><span data-i18n="settings.hfCache">Hugging Face 本地缓存</span></label><label><input id="scan-startup" type="checkbox"/><span data-i18n="settings.onStartup">启动时发现</span></label></div>
+<div class="settings-extra"><label><span data-i18n="settings.depth">扫描深度</span><input data-i18n-aria-label="settings.depth" id="scan-depth" max="12" min="1" type="number" value="6"/></label></div>
+
+</div></details>
+</section>
+<section aria-labelledby="tab-button-runtime" class="hidden" id="tab-runtime" role="tabpanel">
+<div class="small-label" data-i18n="settings.device">推理设备</div>
+<div class="device-options">
+<label><input checked="" name="device" type="radio" value="auto"/><span><span data-i18n="settings.auto">自动</span><small data-i18n="settings.autoPrecision">设备 / 精度</small></span></label>
+<label><input name="device" type="radio" value="hybrid"/><span>GPU + CPU <small>FP32</small></span></label>
+<label><input name="device" type="radio" value="cpu"/><span>CPU <small>FP32</small></span></label>
+<label><input name="device" type="radio" value="cuda_bf16"/><span>GPU <small>BF16</small></span></label>
+<label><input name="device" type="radio" value="cuda_fp32"/><span>GPU <small>FP32</small></span></label>
+<label><input name="device" type="radio" value="cuda_fp16"/><span>GPU <small>FP16</small></span></label>
+</div>
+<div class="field-note" data-i18n="settings.noGpuGuess">自动模式只根据 CUDA 和精度支持情况选择设备；不会根据显存估算修改你的选择，实际运行错误会单独提示。</div>
+<div class="settings-extra"><label><span data-i18n="settings.attention">注意力实现</span><select data-i18n-aria-label="settings.attention" id="attention"><option value="sdpa">SDPA</option><option value="eager">Eager</option></select></label></div>
+<div class="hybrid-fields hidden" id="hybrid-fields"><p class="field-note" data-i18n="settings.hybridBudgetHint">以下仅用于 GPU + CPU 混合模式，按你填写的值尝试加载，不依据设备容量自动缩减。</p><div class="settings-extra"><label><span data-i18n="settings.gpuBudget">GPU 权重预算（GiB）</span><input data-i18n-aria-label="settings.gpuBudget" id="gpu-budget" min="0.1" step="any" type="number" value="3"/></label><label><span data-i18n="settings.cpuBudget">CPU 权重预算（GiB）</span><input data-i18n-aria-label="settings.cpuBudget" id="cpu-budget" min="0.1" step="any" type="number" value="12"/></label></div></div>
+<div class="settings-device"><span id="settings-hardware">—</span><span id="settings-engine">—</span></div>
+<div class="setting-divider"></div><div class="privacy-row"><div><strong data-i18n="settings.releaseTitle">释放已加载模型</strong><small data-i18n="settings.releaseHint">只从内存中卸载模型，不删除文件。下次生成语音会自动重新加载。</small></div><button class="subtle-button" id="release-model" type="button" disabled><i data-icon="power"></i><span data-i18n="action.unload">释放</span></button></div>
+<details class="diagnostics"><summary data-i18n="settings.diagnostics">运行信息</summary><pre id="system-details"></pre></details>
+</section>
+<section aria-labelledby="tab-button-privacy" class="hidden" id="tab-privacy" role="tabpanel">
+<div class="privacy-row"><div><strong data-i18n="privacy.drafts">保留草稿</strong><small data-i18n="privacy.draftsCaption">关闭时仅在当前标签页的会话内保留，刷新不会丢失</small></div><input aria-label="保留草稿" data-i18n-aria-label="privacy.drafts" id="remember-drafts" type="checkbox"/></div>
+<div class="privacy-row"><div><strong data-i18n="privacy.paths">隐藏目录</strong><small data-i18n="privacy.pathsCaption">目录输入默认折叠，点击后编辑</small></div><input aria-label="隐藏目录" checked="" data-i18n-aria-label="privacy.paths" id="hide-paths" type="checkbox"/></div>
+<div class="setting-divider"></div>
+<div class="privacy-actions"><button class="outlined-button" id="diagnostics-export" type="button"><i data-icon="download"></i><span data-i18n="action.diagnostics">导出脱敏诊断</span></button><button class="outlined-button danger" id="clear-local-data" type="button"><i data-icon="trash"></i><span data-i18n="action.clearData">清空创作数据</span></button></div>
+<p class="privacy-note" data-i18n="privacy.note">台词与音频仅存于本地。清理不删除模型或环境。</p>
+</section>
+</div>
+<div class="dialog-footer"><span class="settings-feedback" id="settings-feedback" role="status"></span><button class="generate-button smaller" id="save-settings" type="button"><i data-icon="check"></i><span id="settings-primary-label" data-i18n="action.done">完成</span></button></div>
+</form>
+</dialog>
+<dialog class="dialog" id="preset-dialog"><form class="dialog-card" id="preset-form"><div class="dialog-header"><div><h2 data-i18n="preset.save">保存音色</h2></div><button aria-label="关闭" class="icon-button close-preset" data-i18n-aria-label="action.close" type="button"><i data-icon="x"></i></button></div><div class="dialog-body"><label class="form-group"><span data-i18n="field.name">名称</span><input data-i18n-placeholder="placeholder.preset" id="preset-name" maxlength="70" placeholder="例如：温柔女声" required=""/></label><label class="form-group"><span data-i18n="field.description">描述</span><textarea id="preset-instruct" maxlength="2000" required="" rows="4"></textarea></label></div><div class="dialog-footer"><button class="subtle-button close-preset" data-i18n="action.cancel" type="button">取消</button><button class="generate-button smaller" type="submit"><i data-icon="check"></i><span data-i18n="action.save">保存</span></button></div></form></dialog>
+<dialog class="dialog" id="confirm-dialog"><form class="dialog-card small-dialog" method="dialog"><div class="dialog-header"><h2 id="confirm-title">确认操作</h2></div><div class="dialog-body" id="confirm-message"></div><div class="dialog-footer"><button class="subtle-button" data-i18n="action.cancel" value="cancel">取消</button><button class="generate-button smaller" data-i18n="action.confirm" value="ok">确认</button></div></form></dialog><dialog class="dialog" id="rename-dialog"><form class="dialog-card" id="rename-form"><div class="dialog-header"><h2 data-i18n="action.rename">重命名</h2></div><div class="dialog-body"><input aria-label="音频名称" data-i18n-aria-label="a11y.audioName" id="rename-value" maxlength="100" required=""/></div><div class="dialog-footer"><button class="subtle-button" data-i18n="action.cancel" id="rename-cancel" type="button">取消</button><button class="generate-button smaller" data-i18n="action.save" type="submit">保存</button></div></form></dialog><div aria-atomic="false" aria-live="polite" class="toast-region" id="toasts"></div>
+<script src="/ui/app.js?v=3.6.0" type="module"></script>
+</body>
+</html>
